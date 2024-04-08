@@ -1,0 +1,1012 @@
+diff --git a/src/main.cpp b/src/main.cpp
+index 6ef3d05..718966f 100644
+--- src/main.cpp
++++ src/main.cpp
+@@ -162,13 +162,13 @@ static const char *shortHelp_text =
+     "  AtomicParsley /path/to.mp4 -T 1\n"
+     "  AtomicParsley /path/to.mp4 -t +\n"
+     "  AtomicParsley /path/to.mp4 --artist \"Me\" --artwork /path/to/art.jpg\n"
+-    "  Atomicparsley /path/to.mp4 --albumArtist \"You\" --podcastFlag true\n"
++    "  Atomicparsley /path/to.mp4 --album_artist \"You\" --podcast_flag true\n"
+     "  Atomicparsley /path/to.mp4 --stik \"TV Show\" --advisory explicit\n"
+     "\n"
+     "Getting information about the file & tags:\n"
+     "  -T  --test        Test file for mpeg4-ishness & print atom tree\n"
+-    "  -t  --textdata    Prints tags embedded within the file\n"
+-    "  -E  --extractPix  Extracts pix to the same folder as the mpeg-4 file\n"
++    "  -t  --text_data    Prints tags embedded within the file\n"
++    "  -E  --extract_pix  Extracts pix to the same folder as the mpeg-4 file\n"
+     "\n"
+     "Setting iTunes-style metadata tags\n"
+     "  --artist       (string)     Set the artist tag\n"
+@@ -177,18 +177,18 @@ static const char *shortHelp_text =
+     "  --genre        (string)     Genre tag (see --longhelp for more info)\n"
+     "  --tracknum     (num)[/tot]  Track number (or track number/total "
+     "tracks)\n"
+-    "  --disk         (num)[/tot]  Disk number (or disk number/total disks)\n"
++    "  --disc         (num)[/tot]  Disk number (or disk number/total disks)\n"
+     "  --comment      (string)     Set the comment tag\n"
+-    "  --year         (num|UTC)    Year tag (see --longhelp for \"Release "
++    "  --date         (num|UTC)    Year tag (see --longhelp for \"Release "
+     "Date\")\n"
+     "  --lyrics       (string)     Set lyrics (not subject to 256 byte limit)\n"
+-    "  --lyricsFile   (/path)      Set lyrics to the content of a file\n"
++    "  --lyrics_file  (/path)      Set lyrics to the content of a file\n"
+     "  --composer     (string)     Set the composer tag\n"
+     "  --copyright    (string)     Set the copyright tag\n"
+     "  --grouping     (string)     Set the grouping tag\n"
+     "  --artwork      (/path)      Set a piece of artwork (jpeg or png only)\n"
+     "  --bpm          (number)     Set the tempo/bpm\n"
+-    "  --albumArtist  (string)     Set the album artist tag\n"
++    "  --album_artist (string)     Set the album artist tag\n"
+     "  --compilation  (boolean)    Set the compilation flag (true or false)\n"
+     "  --hdvideo      (number)     Set the hdvideo flag to one of:\n"
+     "                              false or 0 for standard definition\n"
+@@ -201,41 +201,41 @@ static const char *shortHelp_text =
+     "  --description  (string)     Set the description tag\n"
+     "  --longdesc     (string)     Set the long description tag\n"
+     "  --storedesc    (string)     Set the store description tag\n"
+-    "  --TVNetwork    (string)     Set the TV Network name\n"
+-    "  --TVShowName   (string)     Set the TV Show name\n"
+-    "  --TVEpisode    (string)     Set the TV episode/production code\n"
+-    "  --TVSeasonNum  (number)     Set the TV Season number\n"
+-    "  --TVEpisodeNum (number)     Set the TV Episode number\n"
+-    "  --podcastFlag  (boolean)    Set the podcast flag (true or false)\n"
++    "  --tv_network   (string)     Set the TV Network name\n"
++    "  --tv_show_name (string)     Set the TV Show name\n"
++    "  --tv_episode   (string)     Set the TV episode/production code\n"
++    "  --tv_season_num  (number)   Set the TV Season number\n"
++    "  --tv_episode_num (number)   Set the TV Episode number\n"
++    "  --podcast_flag (boolean)    Set the podcast flag (true or false)\n"
+     "  --category     (string)     Sets the podcast category\n"
+     "  --keyword      (string)     Sets the podcast keyword\n"
+-    "  --podcastURL   (URL)        Set the podcast feed URL\n"
+-    "  --podcastGUID  (URL)        Set the episode's URL tag\n"
+-    "  --purchaseDate (UTC)        Set time of purchase\n"
+-    "  --encodingTool (string)     Set the name of the encoder\n"
+-    "  --encodedBy    (string)     Set the name of the Person/company who "
++    "  --podcast_url  (URL)        Set the podcast feed URL\n"
++    "  --podcast_guid (URL)        Set the episode's URL tag\n"
++    "  --purchase_date (UTC)       Set time of purchase\n"
++    "  --encoding_tool (string)    Set the name of the encoder\n"
++    "  --encoded_by   (string)     Set the name of the Person/company who "
+     "encoded the file\n"
+-    "  --apID         (string)     Set the Account Name\n"
+-    "  --cnID         (number)     Set the iTunes Catalog ID (see --longhelp)\n"
+-    "  --geID         (number)     Set the iTunes Genre ID (see --longhelp)\n"
+-    "  --xID          (string)     Set the vendor-supplied iTunes xID (see "
++    "  --ap_id        (string)     Set the Account Name\n"
++    "  --cn_id        (number)     Set the iTunes Catalog ID (see --longhelp)\n"
++    "  --ge_id        (number)     Set the iTunes Genre ID (see --longhelp)\n"
++    "  --x_id         (string)     Set the vendor-supplied iTunes xID (see "
+     "--longhelp)\n"
+     "  --gapless      (boolean)    Set the gapless playback flag\n"
+-    "  --contentRating (string*)   Set tv/mpaa rating (see -rDNS-help)\n"
++    "  --content_rating (string*)  Set tv/mpaa rating (see --r_dns_help)\n"
+     "\n"
+     "Deleting tags\n"
+     "  Set the value to \"\":        --artist \"\" --stik \"\" --bpm \"\"\n"
+     "  To delete (all) artwork:    --artwork REMOVE_ALL\n"
+-    "  manually removal:           --manualAtomRemove "
++    "  manually removal:           --manual_atom_remove "
+     "\"moov.udta.meta.ilst.ATOM\"\n"
+     "\n"
+     "More detailed iTunes help is available with AtomicParsley --longhelp\n"
+-    "Setting reverse DNS forms for iTunes files: see --reverseDNS-help\n"
+-    "Setting 3gp assets into 3GPP & derivative files: see --3gp-help\n"
+-    "Setting copyright notices for all files: see --ISO-help\n"
+-    "For file-level options & padding info: see --file-help\n"
+-    "Setting custom private tag extensions: see --uuid-help\n"
+-    "Setting ID3 tags onto mpeg-4 files: see --ID3-help\n"
++    "Setting reverse DNS forms for iTunes files: see --reverse_dns_help\n"
++    "Setting 3gp assets into 3GPP & derivative files: see --3gp_help\n"
++    "Setting copyright notices for all files: see --iso_help\n"
++    "For file-level options & padding info: see --file_help\n"
++    "Setting custom private tag extensions: see --uuid_help\n"
++    "Setting ID3 tags onto mpeg-4 files: see --id3_help\n"
+     "\n"
+     "----------------------------------------------------------------------";
+ 
+@@ -244,28 +244,28 @@ static const char *shortHelp_text =
+ static const char *longHelp_text =
+     "AtomicParsley help page for setting iTunes-style metadata into MPEG-4 "
+     "files. \n"
+-    "              (3gp help available with AtomicParsley --3gp-help)\n"
+-    "          (ISO copyright help available with AtomicParsley --ISO-help)\n"
++    "              (3gp help available with AtomicParsley --3gp_help)\n"
++    "          (ISO copyright help available with AtomicParsley --iso_help)\n"
+     "      (reverse DNS form help available with AtomicParsley "
+-    "--reverseDNS-help)\n"
++    "--reverse_dns_help)\n"
+     "Usage: AtomicParsley [mp4FILE]... [OPTION]... [ARGUMENT]... [ "
+     "[OPTION2]...[ARGUMENT2]...] \n"
+     "\n"
+     "example: AtomicParsley /path/to.mp4 -e ~/Desktop/pix\n"
+-    "example: AtomicParsley /path/to.mp4 --podcastURL \"http://www.url.net\" "
++    "example: AtomicParsley /path/to.mp4 --podcast_url \"http://www.url.net\" "
+     "--tracknum 45/356\n"
+     "example: AtomicParsley /path/to.mp4 --copyright \"\342\204\227 \302\251 "
+     "2006\"\n"
+-    "example: AtomicParsley /path/to.mp4 --year \"2006-07-27T14:00:43Z\" "
++    "example: AtomicParsley /path/to.mp4 --date \"2006-07-27T14:00:43Z\" "
+     "--purchaseDate timestamp\n"
+-    "example: AtomicParsley /path/to.mp4 --sortOrder artist \"Mighty Dub Cats, "
++    "example: AtomicParsley /path/to.mp4 --sort_order artist \"Mighty Dub Cats, "
+     "The\n"
+     "--------------------------------------------------------------------------"
+     "----------------------\n"
+     "  Extract any pictures in user data \"covr\" atoms to separate files. \n"
+-    "  --extractPix       ,  -E                     Extract to same folder "
++    "  --extract_pix         ,  -E                    Extract to same folder "
+     "(basename derived from file).\n"
+-    "  --extractPixToPath ,  -e  (/path/basename)   Extract to specific path "
++    "  --extract_pix_to_path ,  -e  (/path/basename)  Extract to specific path "
+     "(numbers added to basename).\n"
+     "                                                 example: --e "
+     "~/Desktop/SomeText\n"
+@@ -286,20 +286,20 @@ static const char *longHelp_text =
+     "  --genre            ,  -g   (str)    Set the genre tag: \"\302\251gen\" "
+     "(custom) or \"gnre\" (standard).\n"
+     "                                          see the standard list with "
+-    "\"AtomicParsley --genre-list\"\n"
++    "\"AtomicParsley --genre_list\"\n"
+     "  --tracknum         ,  -k   (num)[/tot]  Set the track number (or track "
+     "number & total tracks).\n"
+-    "  --disk             ,  -d   (num)[/tot]  Set the disk number (or disk "
++    "  --disc             ,  -d   (num)[/tot]  Set the disk number (or disk "
+     "number & total disks).\n"
+     "  --comment          ,  -c   (str)    Set the comment tag: "
+     "\"moov.udta.meta.ilst.\302\251cmt.data\"\n"
+-    "  --year             ,  -y   (num|UTC)    Set the year tag: "
++    "  --date             ,  -y   (num|UTC)    Set the date tag: "
+     "\"moov.udta.meta.ilst.\302\251day.data\"\n"
+     "                                          set with UTC "
+     "\"2006-09-11T09:00:00Z\" for Release Date\n"
+     "  --lyrics           ,  -l   (str)    Set the lyrics tag: "
+     "\"moov.udta.meta.ilst.\302\251lyr.data\"\n"
+-    "  --lyricsFile       ,       (/path)  Set the lyrics tag to the content "
++    "  --lyrics_file      ,       (/path)  Set the lyrics tag to the content "
+     "of a file\n"
+     "  --composer         ,  -w   (str)    Set the composer tag: "
+     "\"moov.udta.meta.ilst.\302\251wrt.data\"\n"
+@@ -313,7 +313,7 @@ static const char *longHelp_text =
+     "allowed with more --artwork args\n"
+     "  --bpm              ,  -B   (num)    Set the tempo/bpm tag: "
+     "\"moov.udta.meta.ilst.tmpo.data\"\n"
+-    "  --albumArtist      ,  -A   (str)    Set the album artist tag: "
++    "  --album_artist     ,  -A   (str)    Set the album artist tag: "
+     "\"moov.udta.meta.ilst.aART.data\"\n"
+     "  --compilation      ,  -C   (bool)   Sets the \"cpil\" atom (true or "
+     "false to delete the atom)\n"
+@@ -326,28 +326,28 @@ static const char *longHelp_text =
+     "                                           \"Movie\", \"Normal\", \"TV "
+     "Show\" .... others: \n"
+     "                                           see the full list with "
+-    "\"AtomicParsley --stik-list\"\n"
++    "\"AtomicParsley --stik_list\"\n"
+     "                                           or set in an integer value "
+     "with --stik value=(num)\n"
+     "                                      Note: --stik Audiobook will change "
+     "file extension to '.m4b'\n"
+     "  --description      ,  -p   (str)    Sets the description on the "
+     "\"desc\" atom\n"
+-    "  --Rating           ,       (str)    Sets the Rating on the \"rate\" "
++    "  --rating           ,       (str)    Sets the Rating on the \"rate\" "
+     "atom\n"
+     "  --longdesc         ,  -j   (str)    Sets the long description on the "
+     "\"ldes\" atom\n"
+     "  --storedesc        ,       (str)    Sets the iTunes store description "
+     "on the \"sdes\" atom\n"
+-    "  --TVNetwork        ,  -n   (str)    Sets the TV Network name on the "
++    "  --tv_network       ,  -n   (str)    Sets the TV Network name on the "
+     "\"tvnn\" atom\n"
+-    "  --TVShowName       ,  -H   (str)    Sets the TV Show name on the "
++    "  --tv_show_name     ,  -H   (str)    Sets the TV Show name on the "
+     "\"tvsh\" atom\n"
+-    "  --TVEpisode        ,  -I   (str)    Sets the TV Episode on "
++    "  --tv_episode       ,  -I   (str)    Sets the TV Episode on "
+     "\"tven\":\"209\", but it is a string: \"209 Part 1\"\n"
+-    "  --TVSeasonNum      ,  -U   (num)    Sets the TV Season number on the "
++    "  --tv_season_num    ,  -U   (num)    Sets the TV Season number on the "
+     "\"tvsn\" atom\n"
+-    "  --TVEpisodeNum     ,  -N   (num)    Sets the TV Episode number on the "
++    "  --tv_episode_num   ,  -N   (num)    Sets the TV Episode number on the "
+     "\"tves\" atom\n"
+ 
+     "  --podcastFlag      ,  -f   (bool)   Sets the podcast flag (values are "
+@@ -356,21 +356,21 @@ static const char *longHelp_text =
+     "typically a duplicate of its genre\n"
+     "  --keyword          ,  -K   (str)    Sets the podcast keyword; invisible "
+     "to MacOSX Spotlight\n"
+-    "  --podcastURL       ,  -L   (URL)    Set the podcast feed URL on the "
++    "  --podcast_url      ,  -L   (URL)    Set the podcast feed URL on the "
+     "\"purl\" atom\n"
+-    "  --podcastGUID      ,  -J   (URL)    Set the episode's URL tag on the "
++    "  --podcast_guid     ,  -J   (URL)    Set the episode's URL tag on the "
+     "\"egid\" atom\n"
+-    "  --purchaseDate     ,  -D   (UTC)    Set Universal Coordinated Time of "
++    "  --purchase_date    ,  -D   (UTC)    Set Universal Coordinated Time of "
+     "purchase on a \"purd\" atom\n"
+     "                                       (use \"timestamp\" to set UTC to "
+     "now; can be akin to id3v2 TDTG tag)\n"
+-    "  --encodingTool     ,       (str)    Set the name of the encoder on the "
++    "  --encoding_tool    ,       (str)    Set the name of the encoder on the "
+     "\"\302\251too\" atom\n"
+-    "  --encodedBy        ,       (str)    Set the name of the Person/company "
++    "  --encoded_by       ,       (str)    Set the name of the Person/company "
+     "who encoded the file on the \"\302\251enc\" atom\n"
+-    "  --apID             ,  -Y   (str)    Set the name of the Account Name on "
++    "  --ap_id            ,  -Y   (str)    Set the name of the Account Name on "
+     "the \"apID\" atom\n"
+-    "  --cnID             ,       (num)    Set iTunes Catalog ID, used for "
++    "  --cn_id            ,       (num)    Set iTunes Catalog ID, used for "
+     "combining SD and HD encodes in iTunes on the \"cnID\" atom\n"
+     "\n"
+     "                                      To combine you must set \"hdvd\" "
+@@ -396,19 +396,19 @@ static const char *longHelp_text =
+     "                                      Alternatively you can use iMDB "
+     "numbers, however these will not match the iTunes catalog.\n"
+     "\n"
+-    "  --geID             ,       (num)    Set iTunes Genre ID.  This does not "
++    "  --ge_id            ,       (num)    Set iTunes Genre ID.  This does not "
+     "necessarily have to match genre.\n"
+     "                                      See --genre-movie-id-list and "
+-    "--genre-tv-id-list\n"
++    "--genre_tv_id_list\n"
+     "\n"
+-    "  --xID              ,       (str)    Set iTunes vendor-supplied xID, "
++    "  --x_id             ,       (str)    Set iTunes vendor-supplied xID, "
+     "used to allow iTunes LPs and iTunes Extras to interact \n"
+     "                                            with other content in your "
+     "iTunes Library\n"
+     "  --gapless          ,       (bool)   Sets the gapless playback flag for "
+     "a track in a gapless album\n"
+ 
+-    "  --sortOrder    (type)      (str)    Sets the sort order string for that "
++    "  --sort_order   (type)      (str)    Sets the sort order string for that "
+     "type of tag.\n"
+     "                                       (available types are: \"name\", "
+     "\"artist\", \"albumartist\",\n"
+@@ -424,11 +424,11 @@ static const char *longHelp_text =
+     " To delete a single atom, set the tag to null (except artwork):\n"
+     "  --artist \"\" --lyrics \"\"\n"
+     "  --artwork REMOVE_ALL \n"
+-    "  --metaEnema        ,  -P            Douches away every atom under "
++    "  --purge_metadata   ,  -P            Douches away every atom under "
+     "\"moov.udta.meta.ilst\" \n"
+-    "  --foobar2000Enema  ,  -2            Eliminates foobar2000's "
++    "  --purge_foobar2000 ,  -2            Eliminates foobar2000's "
+     "non-compliant so-out-o-spec tagging scheme\n"
+-    "  --manualAtomRemove \"some.atom.path\" where some.atom.path can be:\n"
++    "  --manual_atom_remove \"some.atom.path\" where some.atom.path can be:\n"
+     "      keys to using manualAtomRemove:\n"
+     "         ilst.ATOM.data or ilst.ATOM target an iTunes-style metadata tag\n"
+     "         ATOM:lang=foo               target an atom with this language "
+@@ -514,7 +514,7 @@ static const char *fileLevelHelp_text =
+     "                        -T +dates    Track level with creation/modified "
+     "dates\n"
+     "\n"
+-    "  --textdata         ,  -t      print user data text metadata relevant to "
++    "  --text_data        ,  -t      print user data text metadata relevant to "
+     "brand (inc. # of any pics).\n"
+     "                        -t +    show supplemental info like free space, "
+     "available padding, user data\n"
+@@ -551,14 +551,14 @@ static const char *fileLevelHelp_text =
+     "                                              DEFAULT_PAD to 0 via the "
+     "AP_PADDING mechanism (see below).\n"
+     "\n"
+-    "  --preventOptimizing                 Prevents reorganizing the file to "
++    "  --prevent_optimizing                Prevents reorganizing the file to "
+     "have file metadata before media data.\n"
+     "                                      iTunes/Quicktime have so far "
+     "*always* placed metadata first; many 3rd\n"
+     "                                      party utilities do not (preventing "
+     "streaming to the web, AirTunes, iTV).\n"
+     "                                      Used in conjunction with "
+-    "--overWrite, files with metadata at the end\n"
++    "--over_write, files with metadata at the end\n"
+     "                                      (most ffmpeg produced files) can "
+     "have their tags rapidly updated without\n"
+     "                                      requiring a full rewrite. Note: "
+@@ -566,34 +566,34 @@ static const char *fileLevelHelp_text =
+     "                                      Note: this option will be canceled "
+     "out if used with the --freefree option\n"
+     "\n"
+-    "  --metaDump                          Dumps out 'moov.udta' metadata out "
++    "  --dump_metadata                     Dumps out 'moov.udta' metadata out "
+     "to a new file next to original\n"
+     "                                          (for diagnostic purposes, "
+     "please remove artwork before sending)\n"
+     "  --output           ,  -o   (/path)  Specify the filename of tempfile "
+     "(voids overWrite)\n"
+-    "  --overWrite        ,  -W            Writes to temp file; deletes "
++    "  --over_write       ,  -W            Writes to temp file; deletes "
+     "original, renames temp to original\n"
+     "                                      If possible, padding will be used "
+     "to update without a full rewrite.\n"
+     "\n"
+ #if defined(_WIN32)
+     "  --preserveTime                      Will overwrite the original file in "
+-    "place (--overWrite forced),\n"
++    "place (--over_write forced),\n"
+     "                                      but will also keep the original "
+     "file's timestamps intact.\n"
+     "\n"
+ #endif
+-    "  --DeepScan                          Parse areas of the file that are "
++    "  --deep_scan                         Parse areas of the file that are "
+     "normally skipped (must be the 3rd arg)\n"
+-    "  --iPod-uuid                (num)    Place the ipod-required uuid for "
++    "  --ipod_uuid                (num)    Place the ipod-required uuid for "
+     "higher resolution avc video files\n"
+     "                                      Currently, the only number used is "
+     "1200 - the maximum number of macro-\n"
+     "                                      blocks allowed by the higher "
+     "resolution iPod setting.\n"
+     "                                      NOTE: this requires the "
+-    "\"--DeepScan\" option as the 3rd cli argument\n"
++    "\"--deep_scan\" option as the 3rd cli argument\n"
+     "                                      NOTE2: only works on the first avc "
+     "video track, not all avc tracks\n"
+     "\n"
+@@ -603,7 +603,7 @@ static const char *fileLevelHelp_text =
+     "  --freefree 1         (deletes all non-padding atoms at the top most "
+     "level) \n"
+     "  --output ~/Desktop/newfile.mp4\n"
+-    "  AP /path/to/file.m4v --DeepScan --iPod-uuid 1200\n"
++    "  AP /path/to/file.m4v --deep_scan --ipod_uuid 1200\n"
+ 
+     "--------------------------------------------------------------------------"
+     "----------------------\n"
+@@ -659,7 +659,7 @@ static const char *fileLevelHelp_text =
+     "\n"
+     "Note: while AtomicParsley is still in the beta stage, the original file "
+     "will always remain untouched - \n"
+-    "      unless given the --overWrite flag when if possible, utilizing "
++    "      unless given the --over_write flag when if possible, utilizing "
+     "available padding to update tags\n"
+     "      will be tried (falling back to a full rewrite if changes are "
+     "greater than the found padding).\n"
+@@ -696,7 +696,7 @@ static const char *_3gpHelp_text =
+     "or UTF-16 (converted from UTF-8)\n"
+     "  Many 3GPP text tags can be set for a desired language by a "
+     "3-letter-lowercase code (default is \"eng\").\n"
+-    "  For tags that support the language attribute (all except year), more "
++    "  For tags that support the language attribute (all except date), more "
+     "than one tag of the same name\n"
+     "  (3 titles for example) differing in the language code is supported.\n"
+     "\n"
+@@ -735,33 +735,33 @@ static const char *_3gpHelp_text =
+     "     required arguments are in (parentheses); optional arguments are in "
+     "[brackets]\n"
+     "\n"
+-    "  --3gp-title           (str)  [lang=3str]  [UTF16]  [area]  .........  "
++    "  --3gp_title           (str)  [lang=3str]  [UTF16]  [area]  .........  "
+     "Set a 3gp media title tag\n"
+-    "  --3gp-author          (str)  [lang=3str]  [UTF16]  [area]  .........  "
++    "  --3gp_author          (str)  [lang=3str]  [UTF16]  [area]  .........  "
+     "Set a 3gp author of the media tag\n"
+-    "  --3gp-performer       (str)  [lang=3str]  [UTF16]  [area]  .........  "
++    "  --3gp_performer       (str)  [lang=3str]  [UTF16]  [area]  .........  "
+     "Set a 3gp performer or artist tag\n"
+-    "  --3gp-genre           (str)  [lang=3str]  [UTF16]  [area]  .........  "
++    "  --3gp_genre           (str)  [lang=3str]  [UTF16]  [area]  .........  "
+     "Set a 3gp genre asset tag\n"
+-    "  --3gp-description     (str)  [lang=3str]  [UTF16]  [area]  .........  "
++    "  --3gp_description     (str)  [lang=3str]  [UTF16]  [area]  .........  "
+     "Set a 3gp description or caption tag\n"
+-    "  --3gp-copyright       (str)  [lang=3str]  [UTF16]  [area]  .........  "
++    "  --3gp_copyright       (str)  [lang=3str]  [UTF16]  [area]  .........  "
+     "Set a 3gp copyright notice tag*\n"
+     "\n"
+-    "  --3gp-album           (str)  [lang=3str]  [UTF16]  [trknum=int] [area]  "
++    "  --3gp_album           (str)  [lang=3str]  [UTF16]  [trknum=int] [area]  "
+     "Set a 3gp album tag (& opt. tracknum)\n"
+-    "  --3gp-year            (int)  [area]  ...........................  Set a "
+-    "3gp recording year tag (4 digit only)\n"
++    "  --3gp_date            (int)  [area]  ...........................  Set a "
++    "3gp recording date tag (4 digit only)\n"
+     "\n"
+-    "  --3gp-rating          (str)  [entity=4str]  [criteria=4str]  "
++    "  --3gp_rating          (str)  [entity=4str]  [criteria=4str]  "
+     "[lang=3str]  [UTF16]  [area]   Rating tag\n"
+-    "  --3gp-classification  (str)  [entity=4str]  [index=int]      "
++    "  --3gp_classification  (str)  [entity=4str]  [index=int]      "
+     "[lang=3str]  [UTF16]  [area]   Classification\n"
+     "\n"
+-    "  --3gp-keyword         (str)   [lang=3str]  [UTF16]  [area]   Format of "
++    "  --3gp_keyword         (str)   [lang=3str]  [UTF16]  [area]   Format of "
+     "str: 'keywords=word1,word2,word3,word4'\n"
+     "\n"
+-    "  --3gp-location        (str)   [lang=3str]  [UTF16]  [area]   Set a 3gp "
++    "  --3gp_location        (str)   [lang=3str]  [UTF16]  [area]   Set a 3gp "
+     "location tag (default: Central Park)\n"
+     "                                 [longitude=fxd.pt]  [latitude=fxd.pt]  "
+     "[altitude=fxd.pt]\n"
+@@ -782,10 +782,10 @@ static const char *_3gpHelp_text =
+     "\n"
+     "Note1: '4str' = a 4 letter string like \"PG13\"; 3str is a 3 letter "
+     "string like \"eng\"; int is an integer\n"
+-    "Note2: List all languages for '3str' with \"AtomicParsley --language-list "
++    "Note2: List all languages for '3str' with \"AtomicParsley --language_list "
+     "(unknown languages become \"und\")\n"
+     "*Note3: The 3gp copyright asset can potentially be altered by using the "
+-    "--ISO-copyright setting.\n"
++    "--iso_copyright setting.\n"
+ 
+     "--------------------------------------------------------------------------"
+     "--------------------------\n"
+@@ -794,25 +794,25 @@ static const char *_3gpHelp_text =
+     "\n"
+     "example: AtomicParsley /path/to.3gp -t \n"
+     "example: AtomicParsley /path/to.3gp -T 1 \n"
+-    "example: Atomicparsley /path/to.3gp --3gp-performer \"Enjoy Yourself\" "
++    "example: Atomicparsley /path/to.3gp --3gp_performer \"Enjoy Yourself\" "
+     "lang=pol UTF16\n"
+-    "example: Atomicparsley /path/to.3gp --3gp-year 2006 --3gp-album \"White "
++    "example: Atomicparsley /path/to.3gp --3gp_date 2006 --3gp_album \"White "
+     "Label\" track=8 lang=fra\n"
+-    "example: Atomicparsley /path/to.3gp --3gp-album \"Cow Cod Soup For "
++    "example: Atomicparsley /path/to.3gp --3gp_album \"Cow Cod Soup For "
+     "Everyone\" track=10 lang=car\n"
+     "\n"
+-    "example: Atomicparsley /path/to.3gp --3gp-classification \"Poor Sport\" "
++    "example: Atomicparsley /path/to.3gp --3gp_classification \"Poor Sport\" "
+     "entity=\"PTA \" index=12 UTF16\n"
+-    "example: Atomicparsley /path/to.3gp --3gp-keyword "
+-    "keywords=\"foo1,foo2,foo 3\" UTF16 --3gp-keyword \"\"\n"
+-    "example: Atomicparsley /path/to.3gp --3gp-location 'Bethesda Terrace' "
++    "example: Atomicparsley /path/to.3gp --3gp_keyword "
++    "keywords=\"foo1,foo2,foo 3\" UTF16 --3gp_keyword \"\"\n"
++    "example: Atomicparsley /path/to.3gp --3gp_location 'Bethesda Terrace' "
+     "latitude=40.77 longitude=73.98W \n"
+     "                                                    altitude=4.3B "
+     "role='real' body=Earth notes='Underground'\n"
+     "\n"
+-    "example: Atomicparsley /path/to.3gp --3gp-title \"I see London.\" "
+-    "--3gp-title \"Veo Madrid.\" lang=spa \n"
+-    "                                    --3gp-title \"Widze Warsawa.\" "
++    "example: Atomicparsley /path/to.3gp --3gp_title \"I see London.\" "
++    "--3gp_title \"Veo Madrid.\" lang=spa \n"
++    "                                    --3gp_title \"Widze Warsawa.\" "
+     "lang=pol\n"
+     "\n";
+ 
+@@ -825,7 +825,7 @@ static const char *ISOHelp_text =
+     "places. This copyright atom is\n"
+     "  independant of the iTunes-style --copyright tag that can be set. This "
+     "ISO tag is identical to the\n"
+-    "  3GP-style copyright. In fact, using --ISO-copyright can potentially "
++    "  3GP-style copyright. In fact, using --iso_copyright can potentially "
+     "overwrite the 3gp copyright\n"
+     "  asset if set at movie level & given the same language to set the "
+     "copyright on. This copyright\n"
+@@ -836,10 +836,10 @@ static const char *ISOHelp_text =
+     "single track, or for all tracks.\n"
+     "  Multiple copyright notices are allowed, but they must differ in the "
+     "language setting. To see avail-\n"
+-    "  able languages use \"AtomicParsley --language-list\". Notices can be "
++    "  able languages use \"AtomicParsley --language_list\". Notices can be "
+     "set in utf8 or utf16.\n"
+     "\n"
+-    "  --ISO-copyright  (str)  [movie|track|track=#]  [lang=3str]  [UTF16]   "
++    "  --iso_copyright  (str)  [movie|track|track=#]  [lang=3str]  [UTF16]   "
+     "Set a copyright notice\n"
+     "                                                           # in 'track=#' "
+     "denotes the target track\n"
+@@ -852,18 +852,18 @@ static const char *ISOHelp_text =
+     "\n"
+     "example: AtomicParsley /path/file.mp4 -t 1      Note: the only way to see "
+     "all contents is with -t 1 \n"
+-    "example: AtomicParsley /path/file.mp4 --ISO-copyright \"Sample\"\n"
+-    "example: AtomicParsley /path/file.mp4 --ISO-copyright \"Sample\" movie\n"
+-    "example: AtomicParsley /path/file.mp4 --ISO-copyright \"Sample\" track=2 "
++    "example: AtomicParsley /path/file.mp4 --iso_copyright \"Sample\"\n"
++    "example: AtomicParsley /path/file.mp4 --iso_copyright \"Sample\" movie\n"
++    "example: AtomicParsley /path/file.mp4 --iso_copyright \"Sample\" track=2 "
+     "lang=urd\n"
+-    "example: AtomicParsley /path/file.mp4 --ISO-copyright \"Sample\" track "
++    "example: AtomicParsley /path/file.mp4 --iso_copyright \"Sample\" track "
+     "UTF16\n"
+-    "example: AP --ISO-copyright \"Example\" track --ISO-copyright \"Por "
++    "example: AP --iso_copyright \"Example\" track --iso_copyright \"Por "
+     "Exemplo\" track=2 lang=spa UTF16\n"
+     "\n"
+     "Note: to remove the copyright, set the string to \"\" - the track and "
+     "language must match the target.\n"
+-    "example: --ISO-copyright \"\" track --ISO-copyright \"\" track=2 "
++    "example: --iso_copyright \"\" track --iso_copyright \"\" track=2 "
+     "lang=spa\n"
+     "\n"
+     "Note: (foo) denotes required arguments; [foo] denotes optional parameters "
+@@ -897,15 +897,15 @@ static const char *uuidHelp_text =
+     "of tagging on \"tdtg\"\n"
+     "\n"
+     "  Define & set an arbitrary atom with a text data or embed a file:\n"
+-    "  --meta-uuid        There are two forms: 1 for text & 1 for file "
++    "  --meta_uuid        There are two forms: 1 for text & 1 for file "
+     "operations\n"
+     "         setting text form:\n"
+-    "         --meta-uuid   (atom) \"text\" (str)         \"atom\" = 4 "
++    "         --meta_uuid   (atom) \"text\" (str)         \"atom\" = 4 "
+     "character atom name of your choice\n"
+     "                                                     str is whatever text "
+     "you want to set\n"
+     "         file embedding form:\n"
+-    "         --meta-uuid   (atom) \"file\" (/path) [description=\"foo\"] "
++    "         --meta_uuid   (atom) \"file\" (/path) [description=\"foo\"] "
+     "[mime-type=\"foo/moof\"]\n"
+     "                                                     \"atom\" = 4 "
+     "character atom name of your choice\n"
+@@ -932,27 +932,27 @@ static const char *uuidHelp_text =
+     "Examples: \n"
+     "  --tagtime timestamp --information \"[psst]I see metadata\" --url "
+     "http://www.bumperdumper.com\n"
+-    "  --meta-uuid tagr text \"Johnny Appleseed\" --meta-uuid \302\251sft text "
++    "  --meta_uuid tagr text \"Johnny Appleseed\" --meta_uuid \302\251sft text "
+     "\"OpenShiiva encoded.\"\n"
+-    "  --meta-uuid scan file /usr/pix/scans.zip\n"
+-    "  --meta-uuid 1040 file ../../2006_taxes.pdf description=\"Fooled 'The "
++    "  --meta_uuid scan file /usr/pix/scans.zip\n"
++    "  --meta_uuid 1040 file ../../2006_taxes.pdf description=\"Fooled 'The "
+     "Man' yet again.\"\n"
+     "can be removed with:\n"
+-    "  --tagtime \"\" --information \"\"  --url \" \"  --meta-uuid scan file "
++    "  --tagtime \"\" --information \"\"  --url \" \"  --meta_uuid scan file "
+     "\n"
+-    "  --manualAtomRemove "
++    "  --manual_atom_remove "
+     "\"moov.udta.meta.uuid=672c98cd-f11f-51fd-adec-b0ee7b4d215f\" \\\n"
+-    "  --manualAtomRemove "
++    "  --manual_atom_remove "
+     "\"moov.udta.meta.uuid=1fed6656-d911-5385-9cb2-cb2c100f06e7\"\n"
+     "Remove the Sony uuid atoms with:\n"
+-    "  --manualAtomRemove "
++    "  --manual_atom_remove "
+     "moov.trak[1].uuid=55534d54-21d2-4fce-bb88-695cfac9c740 \\\n"
+-    "  --manualAtomRemove "
++    "  --manual_atom_remove "
+     "moov.trak[2].uuid=55534d54-21d2-4fce-bb88-695cfac9c740 \\\n"
+-    "  --manualAtomRemove uuid=50524f46-21d2-4fce-bb88-695cfac9c740\n"
++    "  --manual_atom_remove uuid=50524f46-21d2-4fce-bb88-695cfac9c740\n"
+     "\n"
+     "Viewing the contents of uuid atoms:\n"
+-    "  -t or --textdata           Shows the uuid atoms (both text & file) that "
++    "  -t or --textd_ata           Shows the uuid atoms (both text & file) that "
+     "AP sets:\n"
+     "  Example output:\n"
+     "    Atom uuid=ec0f...d7 (AP uuid for \"scan\") contains: FILE.zip; "
+@@ -961,10 +961,10 @@ static const char *uuidHelp_text =
+     "Appleseed\n"
+     "\n"
+     "Extracting an embedded file in a uuid atom:\n"
+-    "  --extract1uuid      (atom)           Extract file embedded within "
++    "  --extract_1_uuid      (atom)           Extract file embedded within "
+     "uuid=atom into same folder\n"
+     "                                        (file will be named with suffix "
+-    "shown in --textdata)\n"
++    "shown in --text_data)\n"
+     "  --extract-uuids     [/path]          Extract all files in uuid atoms "
+     "under the moov.udta.meta\n"
+     "                                         hierarchy. If no /path is given, "
+@@ -973,10 +973,10 @@ static const char *uuidHelp_text =
+     "originating file.\n"
+     "\n"
+     " Examples:\n"
+-    " --extract1uuid scan\n"
++    " --extract_1_uuid scan\n"
+     "  ...  Extracted uuid=scan attachment to file: "
+     "/some/path/FILE_scan_uuid.zip\n"
+-    " --extract-uuids ~/Desktop/plops\n"
++    " --extract_uuids ~/Desktop/plops\n"
+     "  ...  Extracted uuid=pass attachment to file: "
+     "/Users/me/Desktop/plops_pass_uuid.pdf\n"
+     "  ...  Extracted uuid=site attachment to file: "
+@@ -1007,12 +1007,12 @@ static const char *rDNSHelp_text =
+     "descriptor ('iTunNORM'). A 'data'\n"
+     " atom follows that actually contains the contents of the tag.\n"
+     "\n"
+-    "  --contentRating (rating)             Set the US TV/motion picture media "
++    "  --content_rating (rating)            Set the US TV/motion picture media "
+     "content rating\n"
+     "                                         for available ratings use "
+-    "\"AtomicParsley --ratings-list\n"
++    "\"AtomicParsley --ratings_list\n"
+ 
+-    "  --rDNSatom      (str)   name=(name_str) domain=(reverse_domain)  "
++    "  --r_dns_atom      (str)   name=(name_str) domain=(reverse_domain)  "
+     "Manually set a reverseDNS atom.\n"
+     "\n"
+     " To set the form manually, 3 things are required: a domain, a name, and "
+@@ -1020,13 +1020,13 @@ static const char *rDNSHelp_text =
+     " Note: multiple 'data' atoms are supported, but not in the "
+     "com.apple.iTunes domain\n"
+     " Examples:\n"
+-    "  --contentRating \"NC-17\" --contentRating \"TV-Y7\"\n"
+-    "  --rDNSatom \"mpaa|PG-13|300|\" name=iTunEXTC domain=com.apple.iTunes\n"
+-    "  --contentRating \"\"\n"
+-    "  --rDNSatom \"\" name=iTunEXTC domain=com.apple.iTunes\n"
+-    "  --rDNSatom \"try1\" name=EVAL domain=org.fsf --rDNSatom \"try 2\" "
++    "  --content_rating \"NC-17\" --contentRating \"TV-Y7\"\n"
++    "  --r_dns_atom \"mpaa|PG-13|300|\" name=iTunEXTC domain=com.apple.iTunes\n"
++    "  --content_rating \"\"\n"
++    "  --r_dns_atom \"\" name=iTunEXTC domain=com.apple.iTunes\n"
++    "  --r_dns_atom \"try1\" name=EVAL domain=org.fsf --r_dns_atom \"try 2\" "
+     "name=EVAL domain=org.fsf\n"
+-    "  --rDNSatom \"\" name=EVAL domain=org.fsf\n"
++    "  --r_dns_atom \"\" name=EVAL domain=org.fsf\n"
+     "--------------------------------------------------------------------------"
+     "--------------------------\n";
+ 
+@@ -1060,10 +1060,10 @@ static const char *ID3Help_text =
+     " when an english and a spanish comment are set, 2 separate ID32 atoms are "
+     "created, each with a tag & 1\n"
+     " frame as in this example:\n"
+-    "       --ID3Tag COMM \"Primary\" --desc=AAA --ID3Tag COMM \"El Segundo\" "
++    "       --id3_tag COMM \"Primary\" --desc=AAA --id3_tag COMM \"El Segundo\" "
+     "UTF16LE lang=spa --desc=AAA\n"
+-    " See available frames with \"AtomicParsley --ID3frames-list\"\n"
+-    " See avilable imagetypes with \"AtomicParsley --imagetype-list\"\n"
++    " See available frames with \"AtomicParsley --id3_frames_list\"\n"
++    " See avilable imagetypes with \"AtomicParsley --imagetype_list\"\n"
+     "\n"
+     " AtomicParsley writes ID3 version 2.4.0 tags *only*. There is no "
+     "up-converting from older versions.\n"
+@@ -1104,7 +1104,7 @@ static const char *ID3Help_text =
+     "--------------------------------------------------------------------------"
+     "--------------------------\n"
+     " Usage:\n"
+-    "  --ID3Tag (frameID or alias) (str) [desc=(str)] [mimetype=(str)] "
++    "  --id3_tag (frameID or alias) (str) [desc=(str)] [mimetype=(str)] "
+     "[imagetype=(str or hex)] [...]\n"
+     "\n"
+     "  ... represents other arguments:\n"
+@@ -1116,21 +1116,21 @@ static const char *ID3Help_text =
+     "parameters\n"
+     "\n"
+     " Examples:\n"
+-    " --ID3Tag APIC /path/to/img.ext\n"
+-    " --ID3Tag APIC /path/to/img.ext desc=\"something to say\" imagetype=0x08 "
++    " --id3_tag APIC /path/to/img.ext\n"
++    " --id3_tag APIC /path/to/img.ext desc=\"something to say\" imagetype=0x08 "
+     "UTF16LE compressed\n"
+-    " --ID3Tag composer \"I, Claudius\" --ID3Tag TPUB \"Seneca the Roman\" "
+-    "--ID3Tag TMOO Imperial\n"
+-    " --ID3Tag UFID look@me.org uniqueID=randomUUIDstamp\n"
++    " --id3_tag composer \"I, Claudius\" --id3_tag TPUB \"Seneca the Roman\" "
++    "--id3_tag TMOO Imperial\n"
++    " --id3_tag UFID look@me.org uniqueID=randomUUIDstamp\n"
+     "\n"
+     " Extracting embedded images in APIC frames:\n"
+-    " --ID3Tag APIC extract\n"
++    " --id3_tag APIC extract\n"
+     "       images are extracted into the same directory as the source mpeg-4 "
+     "file\n"
+     "\n"
+ #if defined(__APPLE__)
+     " Setting MCDI (Music CD Identifier):\n"
+-    " --ID3Tag MCDI disk4\n"
++    " --id3_tag MCDI disk4\n"
+     "       Information to create this frame is taken directly off an Audio "
+     "CD's TOC. If the target\n"
+     "       disk is not found or is not an audio CD, a scan of all devices "
+@@ -1144,13 +1144,13 @@ static const char *ID3Help_text =
+     "'MCDI' setting\n"
+ #elif defined(__linux__)
+     " Setting MCDI (Music CD Identifier):\n"
+-    " --ID3Tag MCDI /dev/hdc\n"
++    " --id3_tag MCDI /dev/hdc\n"
+     "       Information to create this frame is taken directly off an Audio "
+     "CD's TOC. An Audio CD\n"
+     "       must be mounted & present.\n"
+ #elif defined(_WIN32)
+     " Setting MCDI (Music CD Identifier):\n"
+-    " --ID3Tag MCDI D\n"
++    " --id3_tag MCDI D\n"
+     "       Information to create this frame is taken directly off an Audio "
+     "CD's TOC. The letter after\n"
+     "       \"MCDI\" is the letter of the drive where the CD is present.\n"
+@@ -1372,75 +1372,75 @@ int real_main(int argc, char *argv[]) {
+       }
+       exit(0);
+ 
+-    } else if ((strcmp(argv[1], "--3gp-help") == 0) ||
+-               (strcmp(argv[1], "-3gp-help") == 0) ||
+-               (strcmp(argv[1], "--3gp-h") == 0)) {
++    } else if ((strcmp(argv[1], "--3gp_help") == 0) ||
++               (strcmp(argv[1], "-3gp_help") == 0) ||
++               (strcmp(argv[1], "--3gp_h") == 0)) {
+       fprintf(stdout, "%s\n", _3gpHelp_text);
+       exit(0);
+ 
+-    } else if ((strcmp(argv[1], "--ISO-help") == 0) ||
+-               (strcmp(argv[1], "--iso-help") == 0) ||
++    } else if ((strcmp(argv[1], "--iso_help") == 0) ||
++               (strcmp(argv[1], "-iso_help") == 0) ||
+                (strcmp(argv[1], "-Ih") == 0)) {
+       fprintf(stdout, "%s\n", ISOHelp_text);
+       exit(0);
+ 
+-    } else if ((strcmp(argv[1], "--file-help") == 0) ||
+-               (strcmp(argv[1], "-file-help") == 0) ||
++    } else if ((strcmp(argv[1], "--file_help") == 0) ||
++               (strcmp(argv[1], "-file_help") == 0) ||
+                (strcmp(argv[1], "-fh") == 0)) {
+       fprintf(stdout, "%s\n", fileLevelHelp_text);
+       exit(0);
+ 
+-    } else if ((strcmp(argv[1], "--uuid-help") == 0) ||
+-               (strcmp(argv[1], "-uuid-help") == 0) ||
++    } else if ((strcmp(argv[1], "--uuid_help") == 0) ||
++               (strcmp(argv[1], "-uuid_help") == 0) ||
+                (strcmp(argv[1], "-uh") == 0)) {
+       fprintf(stdout, "%s\n", uuidHelp_text);
+       exit(0);
+ 
+-    } else if ((strcmp(argv[1], "--reverseDNS-help") == 0) ||
+-               (strcmp(argv[1], "-rDNS-help") == 0) ||
++    } else if ((strcmp(argv[1], "--reverse_dns_help") == 0) ||
++               (strcmp(argv[1], "-r_dns_help") == 0) ||
+                (strcmp(argv[1], "-rh") == 0)) {
+       fprintf(stdout, "%s\n", rDNSHelp_text);
+       exit(0);
+ 
+-    } else if ((strcmp(argv[1], "--ID3-help") == 0) ||
+-               (strcmp(argv[1], "-ID3-help") == 0) ||
+-               (strcmp(argv[1], "-ID3h") == 0)) {
++    } else if ((strcmp(argv[1], "--id3_help") == 0) ||
++               (strcmp(argv[1], "-id3_help") == 0) ||
++               (strcmp(argv[1], "-id3h") == 0)) {
+       fprintf(stdout, "%s\n", ID3Help_text);
+       exit(0);
+ 
+-    } else if (strcmp(argv[1], "--genre-list") == 0) {
++    } else if (strcmp(argv[1], "--genre_list") == 0) {
+       ListGenresValues();
+       exit(0);
+ 
+-    } else if (strcmp(argv[1], "--stik-list") == 0) {
++    } else if (strcmp(argv[1], "--stik_list") == 0) {
+       ListStikValues();
+       exit(0);
+ 
+-    } else if (strcmp(argv[1], "--language-list") == 0 ||
+-               strcmp(argv[1], "--languages-list") == 0 ||
+-               strcmp(argv[1], "--list-language") == 0 ||
+-               strcmp(argv[1], "--list-languages") == 0 ||
++    } else if (strcmp(argv[1], "--language_list") == 0 ||
++               strcmp(argv[1], "--languages_list") == 0 ||
++               strcmp(argv[1], "--list_language") == 0 ||
++               strcmp(argv[1], "--list_languages") == 0 ||
+                strcmp(argv[1], "-ll") == 0) {
+       ListLanguageCodes();
+       exit(0);
+ 
+-    } else if (strcmp(argv[1], "--ratings-list") == 0) {
++    } else if (strcmp(argv[1], "--ratings_list") == 0) {
+       ListMediaRatings();
+       exit(0);
+ 
+-    } else if (strcmp(argv[1], "--genre-movie-id-list") == 0) {
++    } else if (strcmp(argv[1], "--genre_movie_id_list") == 0) {
+       ListMovieGenreIDValues();
+       exit(0);
+ 
+-    } else if (strcmp(argv[1], "--genre-tv-id-list") == 0) {
++    } else if (strcmp(argv[1], "--genre_tv_id_list") == 0) {
+       ListTVGenreIDValues();
+       exit(0);
+ 
+-    } else if (strcmp(argv[1], "--ID3frames-list") == 0) {
++    } else if (strcmp(argv[1], "--id3_frames_list") == 0) {
+       ListID3FrameIDstrings();
+       exit(0);
+ 
+-    } else if (strcmp(argv[1], "--imagetype-list") == 0) {
++    } else if (strcmp(argv[1], "--imagetype_list") == 0) {
+       List_imagtype_strings();
+       exit(0);
+     }
+@@ -1472,7 +1472,7 @@ int real_main(int argc, char *argv[]) {
+     exit(1);
+   }
+ 
+-  if (argc > 3 && strcmp(argv[2], "--DeepScan") == 0) {
++  if (argc > 3 && strcmp(argv[2], "--deep_scan") == 0) {
+     deep_atom_scan = true;
+     APar_ScanAtoms(ISObasemediafile, true);
+   }
+@@ -1481,36 +1481,36 @@ int real_main(int argc, char *argv[]) {
+     static struct option long_options[] = {
+       {"help", 0, NULL, OPT_HELP},
+       {"test", optional_argument, NULL, OPT_TEST},
+-      {"textdata", optional_argument, NULL, OPT_ShowTextData},
+-      {"extractPix", 0, NULL, OPT_ExtractPix},
+-      {"extractPixToPath", required_argument, NULL, OPT_ExtractPixToPath},
++      {"text_data", optional_argument, NULL, OPT_ShowTextData},
++      {"extract_pix", 0, NULL, OPT_ExtractPix},
++      {"extract_pix_to_path", required_argument, NULL, OPT_ExtractPixToPath},
+       {"artist", required_argument, NULL, Meta_artist},
+-      {"artDirector", required_argument, NULL, Meta_artDirector},
++      {"art_director", required_argument, NULL, Meta_artDirector},
+       {"arranger", required_argument, NULL, Meta_arranger},
+       {"author", required_argument, NULL, Meta_author},
+       {"conductor", required_argument, NULL, Meta_conductor},
+       {"director", required_argument, NULL, Meta_director},
+-      {"originalArtist", required_argument, NULL, Meta_originalArtist},
++      {"original_artist", required_argument, NULL, Meta_originalArtist},
+       {"producer", required_argument, NULL, Meta_producer},
+       //        { "performer",        required_argument,  NULL, Meta_performer
+       //        },
+-      {"soundEngineer", required_argument, NULL, Meta_soundEngineer},
++      {"sound_engineer", required_argument, NULL, Meta_soundEngineer},
+       {"soloist", required_argument, NULL, Meta_soloist},
+-      {"executiveProducer", required_argument, NULL, Meta_executiveProducer},
++      {"executive_producer", required_argument, NULL, Meta_executiveProducer},
+       {"title", required_argument, NULL, Meta_songtitle},
+       {"subtitle", required_argument, NULL, Meta_subtitle},
+       {"album", required_argument, NULL, Meta_album},
+       {"genre", required_argument, NULL, Meta_genre},
+       {"tracknum", required_argument, NULL, Meta_tracknum},
+-      {"disknum", required_argument, NULL, Meta_disknum},
++      {"disc", required_argument, NULL, Meta_disknum},
+       {"comment", required_argument, NULL, Meta_comment},
+-      {"year", required_argument, NULL, Meta_year},
++      {"date", required_argument, NULL, Meta_year},
+       {"lyrics", required_argument, NULL, Meta_lyrics},
+-      {"lyricsFile", required_argument, NULL, Meta_lyrics_file},
++      {"lyrics_file", required_argument, NULL, Meta_lyrics_file},
+       {"composer", required_argument, NULL, Meta_composer},
+       {"copyright", required_argument, NULL, Meta_copyright},
+       {"grouping", required_argument, NULL, Meta_grouping},
+-      {"albumArtist", required_argument, NULL, Meta_album_artist},
++      {"album_artist", required_argument, NULL, Meta_album_artist},
+       {"compilation", required_argument, NULL, Meta_compilation},
+       {"hdvideo", required_argument, NULL, Meta_hdvideo},
+       {"advisory", required_argument, NULL, Meta_advisory},
+@@ -1520,73 +1520,73 @@ int real_main(int argc, char *argv[]) {
+       {"description", required_argument, NULL, Meta_description},
+       {"longdesc", required_argument, NULL, Meta_longdescription},
+       {"storedesc", required_argument, NULL, Meta_storedescription},
+-      {"Rating", required_argument, NULL, Meta_Rating},
+-      {"TVNetwork", required_argument, NULL, Meta_TV_Network},
+-      {"TVShowName", required_argument, NULL, Meta_TV_ShowName},
+-      {"TVEpisode", required_argument, NULL, Meta_TV_Episode},
+-      {"TVEpisodeNum", required_argument, NULL, Meta_TV_EpisodeNumber},
+-      {"TVSeasonNum", required_argument, NULL, Meta_TV_SeasonNumber},
+-      {"podcastFlag", required_argument, NULL, Meta_podcastFlag},
++      {"rating", required_argument, NULL, Meta_Rating},
++      {"tv_network", required_argument, NULL, Meta_TV_Network},
++      {"tv_show_name", required_argument, NULL, Meta_TV_ShowName},
++      {"tv_episode", required_argument, NULL, Meta_TV_Episode},
++      {"tv_episode_num", required_argument, NULL, Meta_TV_EpisodeNumber},
++      {"tv_season_num", required_argument, NULL, Meta_TV_SeasonNumber},
++      {"podcast_flag", required_argument, NULL, Meta_podcastFlag},
+       {"keyword", required_argument, NULL, Meta_keyword},
+       {"category", required_argument, NULL, Meta_category},
+-      {"podcastURL", required_argument, NULL, Meta_podcast_URL},
+-      {"podcastGUID", required_argument, NULL, Meta_podcast_GUID},
+-      {"purchaseDate", required_argument, NULL, Meta_PurchaseDate},
+-      {"encodingTool", required_argument, NULL, Meta_EncodingTool},
+-      {"encodedBy", required_argument, NULL, Meta_EncodedBy},
+-      {"apID", required_argument, NULL, Meta_apID},
+-      {"cnID", required_argument, NULL, Meta_cnID},
+-      {"geID", required_argument, NULL, Meta_geID},
+-      {"xID", required_argument, NULL, Meta_xID},
++      {"podcast_url", required_argument, NULL, Meta_podcast_URL},
++      {"podcast_guid", required_argument, NULL, Meta_podcast_GUID},
++      {"purchase_date", required_argument, NULL, Meta_PurchaseDate},
++      {"encoding_tool", required_argument, NULL, Meta_EncodingTool},
++      {"encoded_by", required_argument, NULL, Meta_EncodedBy},
++      {"ap_id", required_argument, NULL, Meta_apID},
++      {"cn_id", required_argument, NULL, Meta_cnID},
++      {"ge_id", required_argument, NULL, Meta_geID},
++      {"x_id", required_argument, NULL, Meta_xID},
+       {"gapless", required_argument, NULL, Meta_PlayGapless},
+-      {"sortOrder", required_argument, NULL, Meta_SortOrder},
++      {"sort_order", required_argument, NULL, Meta_SortOrder},
+ 
+-      {"rDNSatom", required_argument, NULL, Meta_ReverseDNS_Form},
+-      {"contentRating", required_argument, NULL, Meta_rDNS_rating},
++      {"r_dns_atom", required_argument, NULL, Meta_ReverseDNS_Form},
++      {"content_rating", required_argument, NULL, Meta_rDNS_rating},
+ 
+       {"tagtime", optional_argument, NULL, Meta_StandardDate},
+       {"information", required_argument, NULL, Meta_Information},
+       {"url", required_argument, NULL, Meta_URL},
+-      {"meta-uuid", required_argument, NULL, Meta_uuid},
+-      {"extract-uuids", optional_argument, NULL, Opt_Extract_all_uuids},
+-      {"extract1uuid", required_argument, NULL, Opt_Extract_a_uuid},
+-      {"iPod-uuid", required_argument, NULL, Opt_Ipod_AVC_uuid},
++      {"meta_uuid", required_argument, NULL, Meta_uuid},
++      {"extract_uuids", optional_argument, NULL, Opt_Extract_all_uuids},
++      {"extract_1_uuid", required_argument, NULL, Opt_Extract_a_uuid},
++      {"ipod_uuid", required_argument, NULL, Opt_Ipod_AVC_uuid},
+ 
+       {"freefree", optional_argument, NULL, Opt_FreeFree},
+-      {"metaEnema", 0, NULL, Metadata_Purge},
+-      {"manualAtomRemove", required_argument, NULL, Manual_atom_removal},
+-      {"udtaEnema", 0, NULL, UserData_Purge},
+-      {"foobar2000Enema", 0, NULL, foobar_purge},
+-      {"metaDump", 0, NULL, Meta_dump},
++      {"purge_metadata", 0, NULL, Metadata_Purge},
++      {"manual_atom_remove", required_argument, NULL, Manual_atom_removal},
++      {"purge_user_data", 0, NULL, UserData_Purge},
++      {"purge_foobar2000", 0, NULL, foobar_purge},
++      {"dump_metadata", 0, NULL, Meta_dump},
+       {"output", required_argument, NULL, OPT_OutputFile},
+-      {"preventOptimizing", 0, NULL, OPT_NoOptimize},
+-      {"overWrite", 0, NULL, OPT_OverWrite},
++      {"prevent_optimizing", 0, NULL, OPT_NoOptimize},
++      {"over_write", 0, NULL, OPT_OverWrite},
+ #if defined(_WIN32)
+-      {"preserveTime", 0, NULL, OPT_PreserveTimeStamps},
++      {"preserve_time", 0, NULL, OPT_PreserveTimeStamps},
+ #endif
+-      {"ISO-copyright", required_argument, NULL, ISO_Copyright},
+-
+-      {"3gp-title", required_argument, NULL, _3GP_Title},
+-      {"3gp-author", required_argument, NULL, _3GP_Author},
+-      {"3gp-performer", required_argument, NULL, _3GP_Performer},
+-      {"3gp-genre", required_argument, NULL, _3GP_Genre},
+-      {"3gp-description", required_argument, NULL, _3GP_Description},
+-      {"3gp-copyright", required_argument, NULL, _3GP_Copyright},
+-      {"3gp-album", required_argument, NULL, _3GP_Album},
+-      {"3gp-year", required_argument, NULL, _3GP_Year},
+-
+-      {"3gp-rating", required_argument, NULL, _3GP_Rating},
+-      {"3gp-classification", required_argument, NULL, _3GP_Classification},
+-      {"3gp-keyword", required_argument, NULL, _3GP_Keyword},
+-      {"3gp-location", required_argument, NULL, _3GP_Location},
+-
+-      {"ID3Tag", required_argument, NULL, Meta_ID3v2Tag},
+-
+-      {"DeepScan", 0, &extr, 1},
+-      {"movementCount", required_argument, NULL, Meta_movementCount},
+-      {"movementName", required_argument, NULL, Meta_movementName},
+-      {"movementNumber", required_argument, NULL, Meta_movementNumber},
+-      {"showWorkMovement", required_argument, NULL, Meta_showWorkMovement},
++      {"iso_copyright", required_argument, NULL, ISO_Copyright},
++
++      {"3gp_title", required_argument, NULL, _3GP_Title},
++      {"3gp_author", required_argument, NULL, _3GP_Author},
++      {"3gp_performer", required_argument, NULL, _3GP_Performer},
++      {"3gp_genre", required_argument, NULL, _3GP_Genre},
++      {"3gp_description", required_argument, NULL, _3GP_Description},
++      {"3gp_copyright", required_argument, NULL, _3GP_Copyright},
++      {"3gp_album", required_argument, NULL, _3GP_Album},
++      {"3gp_date", required_argument, NULL, _3GP_Year},
++
++      {"3gp_rating", required_argument, NULL, _3GP_Rating},
++      {"3gp_classification", required_argument, NULL, _3GP_Classification},
++      {"3gp_keyword", required_argument, NULL, _3GP_Keyword},
++      {"3gp_location", required_argument, NULL, _3GP_Location},
++
++      {"id3_tag", required_argument, NULL, Meta_ID3v2Tag},
++
++      {"deep_scan", 0, &extr, 1},
++      {"movement_count", required_argument, NULL, Meta_movementCount},
++      {"movement_name", required_argument, NULL, Meta_movementName},
++      {"movement_number", required_argument, NULL, Meta_movementNumber},
++      {"show_work_movement", required_argument, NULL, Meta_showWorkMovement},
+       {"work", required_argument, NULL, Meta_work},
+ 
+       {0, 0, 0, 0}
+@@ -2050,7 +2050,7 @@ int real_main(int argc, char *argv[]) {
+ 
+     case Meta_year: {
+       APar_ScanAtoms(ISObasemediafile);
+-      if (!APar_assert(metadata_style == ITUNES_STYLE, 1, "year")) {
++      if (!APar_assert(metadata_style == ITUNES_STYLE, 1, "date")) {
+         break;
+       }
+ 
+@@ -3498,7 +3498,7 @@ int real_main(int argc, char *argv[]) {
+       if (!APar_assert(metadata_style >= THIRD_GEN_PARTNER &&
+                            metadata_style < MOTIONJPEG2000,
+                        2,
+-                       "year")) {
++                       "date")) {
+         break;
+       }
+       uint8_t userdata_area = MOVIE_LEVEL_ATOM;

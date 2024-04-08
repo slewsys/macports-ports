@@ -7,7 +7,7 @@ PortGroup           cmake 1.1
 name                AtomicParsley
 github.setup        wez atomicparsley 20221229.172126.d813aa6
 github.tarball_from archive
-revision            0
+revision            1
 
 categories          multimedia
 maintainers         nomaintainer
@@ -26,6 +26,8 @@ checksums           rmd160  57fa2cbe3f7d4b54cb14a1b857b8d5ba98649218 \
 conflicts           AtomicParsley-devel
 
 depends_lib         port:zlib
+
+patchfiles-append   patch-snake_case-options.diff
 
 if {${os.platform} eq "darwin" && ${os.major} < 16} {
     patchfiles-append   patch-use-deprecated.diff
